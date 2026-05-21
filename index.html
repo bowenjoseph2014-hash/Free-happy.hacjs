@@ -36,8 +36,8 @@
             font-size: 32px;
         }
 
-        .time-display {
-            font-size: 64px;
+        .ip-display {
+            font-size: 48px;
             font-weight: bold;
             color: #667eea;
             margin-bottom: 40px;
@@ -47,6 +47,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            word-break: break-all;
         }
 
         .date-display {
@@ -129,12 +130,12 @@
 </head>
 <body>
     <div class="container">
-        <h1>⏰ Happy Time</h1>
-        <div class="time-display" id="timeDisplay">00:00:00</div>
+        <h1>🌐 Your IP Address</h1>
+        <div class="ip-display" id="ipDisplay">Loading...</div>
         <div class="date-display" id="dateDisplay">Loading...</div>
         
         <div class="button-group">
-            <button onclick="updateTime()">Update Time & Download IP</button>
+            <button onclick="updateIP()">📥 Download IP & Address</button>
             <button class="publish-btn" onclick="publishIPInfo()">🌐 Publish for Everyone</button>
         </div>
 
@@ -148,24 +149,7 @@
     <script>
         let userIPData = null;
 
-        async function updateTime() {
-            const now = new Date();
-            
-            // Format time
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            const timeString = `${hours}:${minutes}:${seconds}`;
-            
-            // Format date
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const dateString = now.toLocaleDateString('en-US', options);
-            
-            // Update display
-            document.getElementById('timeDisplay').textContent = timeString;
-            document.getElementById('dateDisplay').textContent = dateString;
-
-            // Fetch and download IP info
+        async function updateIP() {
             const infoDisplay = document.getElementById('infoDisplay');
             const infoContent = document.getElementById('infoContent');
             const statusMessage = document.getElementById('statusMessage');
@@ -177,6 +161,9 @@
                 const response = await fetch('https://ipapi.co/json/');
                 const data = await response.json();
                 userIPData = data;
+
+                // Update IP display
+                document.getElementById('ipDisplay').textContent = data.ip;
 
                 infoContent.innerHTML = `
                     <div class="info-item"><strong>Public IP:</strong> ${data.ip}</div>
@@ -203,7 +190,7 @@
                 window.URL.revokeObjectURL(url);
                 document.body.removeChild(a);
 
-                statusMessage.textContent = '✅ Time updated & Information downloaded successfully!';
+                statusMessage.textContent = '✅ Information downloaded successfully!';
             } catch (error) {
                 infoContent.innerHTML = '<div class="info-item">❌ Failed to fetch information</div>';
                 statusMessage.textContent = '❌ Error fetching data';
@@ -222,6 +209,9 @@
                 const response = await fetch('https://ipapi.co/json/');
                 const data = await response.json();
                 userIPData = data;
+
+                // Update IP display
+                document.getElementById('ipDisplay').textContent = data.ip;
 
                 infoContent.innerHTML = `
                     <div class="info-item"><strong>Public IP:</strong> ${data.ip}</div>
@@ -261,6 +251,8 @@
                 const infoContent = document.getElementById('infoContent');
                 const statusMessage = document.getElementById('statusMessage');
 
+                document.getElementById('ipDisplay').textContent = params.get('ip');
+
                 infoContent.innerHTML = `
                     <div class="info-item"><strong>Public IP:</strong> ${params.get('ip')}</div>
                     <div class="info-item"><strong>City:</strong> ${params.get('city')}</div>
@@ -274,18 +266,20 @@
             }
         }
 
-        // Update time when page loads
-        updateTime();
-
-        // Update time every second (without fetching IP every time)
-        setInterval(() => {
+        // Update date display
+        function updateDate() {
             const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            const timeString = `${hours}:${minutes}:${seconds}`;
-            document.getElementById('timeDisplay').textContent = timeString;
-        }, 1000);
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateString = now.toLocaleDateString('en-US', options);
+            document.getElementById('dateDisplay').textContent = dateString;
+        }
+
+        // Fetch IP when page loads
+        updateIP();
+
+        // Update date every second
+        updateDate();
+        setInterval(updateDate, 1000);
 
         // Check for shared IP info
         checkURLParams();
