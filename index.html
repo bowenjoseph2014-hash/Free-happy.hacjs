@@ -18,6 +18,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 20px;
         }
 
         .container {
@@ -54,6 +55,13 @@
             margin-bottom: 40px;
         }
 
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
         button {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -74,6 +82,53 @@
         button:active {
             transform: translateY(0);
         }
+
+        .info-display {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .info-display.show {
+            display: block;
+        }
+
+        .info-display h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .info-item {
+            color: #666;
+            margin: 8px 0;
+            font-size: 14px;
+            word-break: break-all;
+        }
+
+        .info-item strong {
+            color: #333;
+        }
+
+        .status-message {
+            color: #667eea;
+            font-size: 14px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #29323c 0%, #485563 100%);
+        }
+
+        .publish-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
     </style>
 </head>
 <body>
@@ -81,10 +136,23 @@
         <h1>⏰ Happy Time</h1>
         <div class="time-display" id="timeDisplay">00:00:00</div>
         <div class="date-display" id="dateDisplay">Loading...</div>
-        <button onclick="updateTime()">Update Time</button>
+        
+        <div class="button-group">
+            <button onclick="updateTime()">Update Time</button>
+            <button class="download-btn" onclick="downloadIPInfo()">📥 Download IP & Address</button>
+            <button class="publish-btn" onclick="publishIPInfo()">🌐 Publish for Everyone</button>
+        </div>
+
+        <div class="info-display" id="infoDisplay">
+            <h3>Your Network Information:</h3>
+            <div id="infoContent"></div>
+            <div id="statusMessage" class="status-message"></div>
+        </div>
     </div>
 
     <script>
+        let userIPData = null;
+
         function updateTime() {
             const now = new Date();
             
@@ -103,11 +171,133 @@
             document.getElementById('dateDisplay').textContent = dateString;
         }
 
+        async function fetchIPInfo() {
+            try {
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                userIPData = data;
+                return data;
+            } catch (error) {
+                console.error('Error fetching IP info:', error);
+                return null;
+            }
+        }
+
+        async function downloadIPInfo() {
+            const infoDisplay = document.getElementById('infoDisplay');
+            const infoContent = document.getElementById('infoContent');
+            const statusMessage = document.getElementById('statusMessage');
+
+            statusMessage.textContent = '📍 Fetching your information...';
+            infoDisplay.classList.add('show');
+
+            const data = await fetchIPInfo();
+            
+            if (data) {
+                infoContent.innerHTML = `
+                    <div class="info-item"><strong>Public IP:</strong> ${data.ip}</div>
+                    <div class="info-item"><strong>City:</strong> ${data.city}</div>
+                    <div class="info-item"><strong>Region:</strong> ${data.region}</div>
+                    <div class="info-item"><strong>Country:</strong> ${data.country_name}</div>
+                    <div class="info-item"><strong>Postal Code:</strong> ${data.postal}</div>
+                    <div class="info-item"><strong>Latitude:</strong> ${data.latitude}</div>
+                    <div class="info-item"><strong>Longitude:</strong> ${data.longitude}</div>
+                    <div class="info-item"><strong>ISP:</strong> ${data.org}</div>
+                    <div class="info-item"><strong>Timezone:</strong> ${data.timezone}</div>
+                `;
+
+                // Create and trigger download
+                const text = `Public IP Information\n${'='.repeat(50)}\nIP Address: ${data.ip}\nCity: ${data.city}\nRegion: ${data.region}\nCountry: ${data.country_name}\nPostal Code: ${data.postal}\nLatitude: ${data.latitude}\nLongitude: ${data.longitude}\nISP: ${data.org}\nTimezone: ${data.timezone}\n\nFetched on: ${new Date().toLocaleString()}`;
+                
+                const blob = new Blob([text], { type: 'text/plain' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `ip_info_${Date.now()}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+
+                statusMessage.textContent = '✅ Information downloaded successfully!';
+            } else {
+                infoContent.innerHTML = '<div class="info-item">❌ Failed to fetch information</div>';
+                statusMessage.textContent = '❌ Error fetching data';
+            }
+        }
+
+        async function publishIPInfo() {
+            const infoDisplay = document.getElementById('infoDisplay');
+            const infoContent = document.getElementById('infoContent');
+            const statusMessage = document.getElementById('statusMessage');
+
+            statusMessage.textContent = '📍 Fetching your information...';
+            infoDisplay.classList.add('show');
+
+            const data = await fetchIPInfo();
+            
+            if (data) {
+                infoContent.innerHTML = `
+                    <div class="info-item"><strong>Public IP:</strong> ${data.ip}</div>
+                    <div class="info-item"><strong>City:</strong> ${data.city}</div>
+                    <div class="info-item"><strong>Region:</strong> ${data.region}</div>
+                    <div class="info-item"><strong>Country:</strong> ${data.country_name}</div>
+                    <div class="info-item"><strong>Postal Code:</strong> ${data.postal}</div>
+                    <div class="info-item"><strong>Latitude:</strong> ${data.latitude}</div>
+                    <div class="info-item"><strong>Longitude:</strong> ${data.longitude}</div>
+                    <div class="info-item"><strong>ISP:</strong> ${data.org}</div>
+                    <div class="info-item"><strong>Timezone:</strong> ${data.timezone}</div>
+                `;
+
+                // Create shareable link
+                const queryString = `ip=${data.ip}&city=${data.city}&region=${data.region}&country=${data.country_name}&lat=${data.latitude}&lng=${data.longitude}`;
+                const shareUrl = `${window.location.origin}?${queryString}`;
+                
+                infoContent.innerHTML += `<div class="info-item" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd;"><strong>Share Link:</strong><br><a href="${shareUrl}" target="_blank" style="color: #667eea; word-break: break-all;">${shareUrl}</a></div>`;
+
+                statusMessage.textContent = '✅ Copied to clipboard! Share the link above.';
+                
+                // Copy to clipboard
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    statusMessage.textContent = '✅ Share link copied to clipboard!';
+                }).catch(() => {
+                    statusMessage.textContent = '✅ Information published! Copy the link above to share.';
+                });
+            } else {
+                infoContent.innerHTML = '<div class="info-item">❌ Failed to fetch information</div>';
+                statusMessage.textContent = '❌ Error fetching data';
+            }
+        }
+
+        // Check if URL contains IP info to display
+        function checkURLParams() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('ip')) {
+                const infoDisplay = document.getElementById('infoDisplay');
+                const infoContent = document.getElementById('infoContent');
+                const statusMessage = document.getElementById('statusMessage');
+
+                infoContent.innerHTML = `
+                    <div class="info-item"><strong>Public IP:</strong> ${params.get('ip')}</div>
+                    <div class="info-item"><strong>City:</strong> ${params.get('city')}</div>
+                    <div class="info-item"><strong>Region:</strong> ${params.get('region')}</div>
+                    <div class="info-item"><strong>Country:</strong> ${params.get('country')}</div>
+                    <div class="info-item"><strong>Latitude:</strong> ${params.get('lat')}</div>
+                    <div class="info-item"><strong>Longitude:</strong> ${params.get('lng')}</div>
+                `;
+                infoDisplay.classList.add('show');
+                statusMessage.textContent = '👤 Viewing shared network information';
+            }
+        }
+
         // Update time when page loads
         updateTime();
 
         // Update time every second
         setInterval(updateTime, 1000);
+
+        // Check for shared IP info
+        checkURLParams();
     </script>
 </body>
 </html>
