@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Time</title>
+    <title>Your IP Address</title>
     <style>
         * {
             margin: 0;
@@ -12,7 +12,7 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
@@ -23,43 +23,53 @@
 
         .container {
             background: white;
-            padding: 50px;
-            border-radius: 20px;
+            padding: 60px;
+            border-radius: 30px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             text-align: center;
-            max-width: 500px;
+            max-width: 600px;
+            backdrop-filter: blur(10px);
         }
 
         h1 {
             color: #333;
-            margin-bottom: 30px;
-            font-size: 32px;
+            margin-bottom: 50px;
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
         }
 
         .ip-display {
-            font-size: 48px;
-            font-weight: bold;
+            font-size: 56px;
+            font-weight: 700;
             color: #667eea;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
             font-family: 'Courier New', monospace;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             min-height: 80px;
             display: flex;
             align-items: center;
             justify-content: center;
             word-break: break-all;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .date-display {
-            font-size: 18px;
-            color: #666;
-            margin-bottom: 40px;
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 50px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .button-group {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
             margin-bottom: 30px;
         }
 
@@ -67,64 +77,151 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            padding: 15px 40px;
-            font-size: 18px;
-            border-radius: 50px;
+            padding: 16px 40px;
+            font-size: 16px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            font-weight: bold;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
         button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
         }
 
         button:active {
-            transform: translateY(0);
-        }
-
-        .info-display {
-            background: #f5f5f5;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-            text-align: left;
-            max-height: 200px;
-            overflow-y: auto;
-            display: none;
-        }
-
-        .info-display.show {
-            display: block;
-        }
-
-        .info-display h3 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 16px;
-        }
-
-        .info-item {
-            color: #666;
-            margin: 8px 0;
-            font-size: 14px;
-            word-break: break-all;
-        }
-
-        .info-item strong {
-            color: #333;
-        }
-
-        .status-message {
-            color: #667eea;
-            font-size: 14px;
-            margin-top: 10px;
-            font-weight: bold;
+            transform: translateY(-1px);
         }
 
         .publish-btn {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
+        }
+
+        .publish-btn:hover {
+            box-shadow: 0 8px 25px rgba(245, 87, 108, 0.5);
+        }
+
+        .info-display {
+            background: linear-gradient(135deg, #f8f9fa 0%, #f5f5f5 100%);
+            padding: 30px;
+            border-radius: 20px;
+            margin-top: 30px;
+            text-align: left;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            border: 1px solid #e8e8e8;
+        }
+
+        .info-display.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .info-display h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #667eea;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .info-item {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+
+        .info-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+        }
+
+        .info-label {
+            color: #999;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            color: #333;
+            font-size: 14px;
+            font-weight: 600;
+            word-break: break-all;
+        }
+
+        .status-message {
+            color: #667eea;
+            font-size: 13px;
+            margin-top: 15px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .share-link-container {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .share-link-container a {
+            color: #667eea;
+            text-decoration: none;
+            word-break: break-all;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .share-link-container a:hover {
+            text-decoration: underline;
+        }
+
+        .info-display::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .info-display::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .info-display::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .info-display::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
         }
     </style>
 </head>
@@ -135,12 +232,12 @@
         <div class="date-display" id="dateDisplay">Loading...</div>
         
         <div class="button-group">
-            <button onclick="updateIP()">📥 Download IP & Address</button>
+            <button onclick="updateIP()">📥 Download IP & Details</button>
             <button class="publish-btn" onclick="publishIPInfo()">🌐 Publish for Everyone</button>
         </div>
 
         <div class="info-display" id="infoDisplay">
-            <h3>Your Network Information:</h3>
+            <h3>Network Information</h3>
             <div id="infoContent"></div>
             <div id="statusMessage" class="status-message"></div>
         </div>
@@ -166,19 +263,36 @@
                 document.getElementById('ipDisplay').textContent = data.ip;
 
                 infoContent.innerHTML = `
-                    <div class="info-item"><strong>Public IP:</strong> ${data.ip}</div>
-                    <div class="info-item"><strong>City:</strong> ${data.city}</div>
-                    <div class="info-item"><strong>Region:</strong> ${data.region}</div>
-                    <div class="info-item"><strong>Country:</strong> ${data.country_name}</div>
-                    <div class="info-item"><strong>Postal Code:</strong> ${data.postal}</div>
-                    <div class="info-item"><strong>Latitude:</strong> ${data.latitude}</div>
-                    <div class="info-item"><strong>Longitude:</strong> ${data.longitude}</div>
-                    <div class="info-item"><strong>ISP:</strong> ${data.org}</div>
-                    <div class="info-item"><strong>Timezone:</strong> ${data.timezone}</div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Country</div>
+                            <div class="info-value">${data.country_name}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Postal</div>
+                            <div class="info-value">${data.postal || 'N/A'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Latitude</div>
+                            <div class="info-value">${data.latitude}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Longitude</div>
+                            <div class="info-value">${data.longitude}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">ISP</div>
+                            <div class="info-value">${data.org}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Timezone</div>
+                            <div class="info-value">${data.timezone}</div>
+                        </div>
+                    </div>
                 `;
 
                 // Create and trigger download
-                const text = `Public IP Information\n${'='.repeat(50)}\nIP Address: ${data.ip}\nCity: ${data.city}\nRegion: ${data.region}\nCountry: ${data.country_name}\nPostal Code: ${data.postal}\nLatitude: ${data.latitude}\nLongitude: ${data.longitude}\nISP: ${data.org}\nTimezone: ${data.timezone}\n\nFetched on: ${new Date().toLocaleString()}`;
+                const text = `IP ADDRESS INFORMATION\n${'='.repeat(50)}\n\nIP Address: ${data.ip}\nCountry: ${data.country_name}\nPostal Code: ${data.postal}\nLatitude: ${data.latitude}\nLongitude: ${data.longitude}\nISP: ${data.org}\nTimezone: ${data.timezone}\n\nFetched: ${new Date().toLocaleString()}`;
                 
                 const blob = new Blob([text], { type: 'text/plain' });
                 const url = window.URL.createObjectURL(blob);
@@ -190,9 +304,9 @@
                 window.URL.revokeObjectURL(url);
                 document.body.removeChild(a);
 
-                statusMessage.textContent = '✅ Information downloaded successfully!';
+                statusMessage.textContent = '✅ Downloaded successfully!';
             } catch (error) {
-                infoContent.innerHTML = '<div class="info-item">❌ Failed to fetch information</div>';
+                infoContent.innerHTML = '<div style="color: #e74c3c; font-weight: 600;">❌ Failed to fetch information</div>';
                 statusMessage.textContent = '❌ Error fetching data';
             }
         }
@@ -214,31 +328,48 @@
                 document.getElementById('ipDisplay').textContent = data.ip;
 
                 infoContent.innerHTML = `
-                    <div class="info-item"><strong>Public IP:</strong> ${data.ip}</div>
-                    <div class="info-item"><strong>City:</strong> ${data.city}</div>
-                    <div class="info-item"><strong>Region:</strong> ${data.region}</div>
-                    <div class="info-item"><strong>Country:</strong> ${data.country_name}</div>
-                    <div class="info-item"><strong>Postal Code:</strong> ${data.postal}</div>
-                    <div class="info-item"><strong>Latitude:</strong> ${data.latitude}</div>
-                    <div class="info-item"><strong>Longitude:</strong> ${data.longitude}</div>
-                    <div class="info-item"><strong>ISP:</strong> ${data.org}</div>
-                    <div class="info-item"><strong>Timezone:</strong> ${data.timezone}</div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Country</div>
+                            <div class="info-value">${data.country_name}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Postal</div>
+                            <div class="info-value">${data.postal || 'N/A'}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Latitude</div>
+                            <div class="info-value">${data.latitude}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Longitude</div>
+                            <div class="info-value">${data.longitude}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">ISP</div>
+                            <div class="info-value">${data.org}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Timezone</div>
+                            <div class="info-value">${data.timezone}</div>
+                        </div>
+                    </div>
                 `;
 
                 // Create shareable link
-                const queryString = `ip=${data.ip}&city=${data.city}&region=${data.region}&country=${data.country_name}&lat=${data.latitude}&lng=${data.longitude}`;
+                const queryString = `ip=${data.ip}&country=${data.country_name}&lat=${data.latitude}&lng=${data.longitude}`;
                 const shareUrl = `${window.location.origin}?${queryString}`;
                 
-                infoContent.innerHTML += `<div class="info-item" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd;"><strong>Share Link:</strong><br><a href="${shareUrl}" target="_blank" style="color: #667eea; word-break: break-all;">${shareUrl}</a></div>`;
+                infoContent.innerHTML += `<div class="share-link-container"><div class="info-label">Share Link</div><a href="${shareUrl}" target="_blank">${shareUrl}</a></div>`;
 
                 // Copy to clipboard
                 navigator.clipboard.writeText(shareUrl).then(() => {
-                    statusMessage.textContent = '✅ Share link copied to clipboard!';
+                    statusMessage.textContent = '✅ Link copied to clipboard!';
                 }).catch(() => {
-                    statusMessage.textContent = '✅ Information published! Copy the link above to share.';
+                    statusMessage.textContent = '✅ Share link ready! Copy above.';
                 });
             } catch (error) {
-                infoContent.innerHTML = '<div class="info-item">❌ Failed to fetch information</div>';
+                infoContent.innerHTML = '<div style="color: #e74c3c; font-weight: 600;">❌ Failed to fetch information</div>';
                 statusMessage.textContent = '❌ Error fetching data';
             }
         }
@@ -254,23 +385,31 @@
                 document.getElementById('ipDisplay').textContent = params.get('ip');
 
                 infoContent.innerHTML = `
-                    <div class="info-item"><strong>Public IP:</strong> ${params.get('ip')}</div>
-                    <div class="info-item"><strong>City:</strong> ${params.get('city')}</div>
-                    <div class="info-item"><strong>Region:</strong> ${params.get('region')}</div>
-                    <div class="info-item"><strong>Country:</strong> ${params.get('country')}</div>
-                    <div class="info-item"><strong>Latitude:</strong> ${params.get('lat')}</div>
-                    <div class="info-item"><strong>Longitude:</strong> ${params.get('lng')}</div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Country</div>
+                            <div class="info-value">${params.get('country')}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Latitude</div>
+                            <div class="info-value">${params.get('lat')}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Longitude</div>
+                            <div class="info-value">${params.get('lng')}</div>
+                        </div>
+                    </div>
                 `;
                 infoDisplay.classList.add('show');
-                statusMessage.textContent = '👤 Viewing shared network information';
+                statusMessage.textContent = '👤 Viewing shared information';
             }
         }
 
         // Update date display
         function updateDate() {
             const now = new Date();
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const dateString = now.toLocaleDateString('en-US', options);
+            const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+            const dateString = now.toLocaleDateString('en-US', options).toUpperCase();
             document.getElementById('dateDisplay').textContent = dateString;
         }
 
