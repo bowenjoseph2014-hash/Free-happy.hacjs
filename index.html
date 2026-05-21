@@ -122,10 +122,6 @@
             font-weight: bold;
         }
 
-        .download-btn {
-            background: linear-gradient(135deg, #29323c 0%, #485563 100%);
-        }
-
         .publish-btn {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
         }
@@ -138,8 +134,7 @@
         <div class="date-display" id="dateDisplay">Loading...</div>
         
         <div class="button-group">
-            <button onclick="updateTime()">Update Time</button>
-            <button class="download-btn" onclick="downloadIPInfo()">📥 Download IP & Address</button>
+            <button onclick="updateTime()">Update Time & Download IP</button>
             <button class="publish-btn" onclick="publishIPInfo()">🌐 Publish for Everyone</button>
         </div>
 
@@ -153,7 +148,7 @@
     <script>
         let userIPData = null;
 
-        function updateTime() {
+        async function updateTime() {
             const now = new Date();
             
             // Format time
@@ -169,21 +164,8 @@
             // Update display
             document.getElementById('timeDisplay').textContent = timeString;
             document.getElementById('dateDisplay').textContent = dateString;
-        }
 
-        async function fetchIPInfo() {
-            try {
-                const response = await fetch('https://ipapi.co/json/');
-                const data = await response.json();
-                userIPData = data;
-                return data;
-            } catch (error) {
-                console.error('Error fetching IP info:', error);
-                return null;
-            }
-        }
-
-        async function downloadIPInfo() {
+            // Fetch and download IP info
             const infoDisplay = document.getElementById('infoDisplay');
             const infoContent = document.getElementById('infoContent');
             const statusMessage = document.getElementById('statusMessage');
@@ -191,9 +173,11 @@
             statusMessage.textContent = '📍 Fetching your information...';
             infoDisplay.classList.add('show');
 
-            const data = await fetchIPInfo();
-            
-            if (data) {
+            try {
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                userIPData = data;
+
                 infoContent.innerHTML = `
                     <div class="info-item"><strong>Public IP:</strong> ${data.ip}</div>
                     <div class="info-item"><strong>City:</strong> ${data.city}</div>
@@ -219,8 +203,8 @@
                 window.URL.revokeObjectURL(url);
                 document.body.removeChild(a);
 
-                statusMessage.textContent = '✅ Information downloaded successfully!';
-            } else {
+                statusMessage.textContent = '✅ Time updated & Information downloaded successfully!';
+            } catch (error) {
                 infoContent.innerHTML = '<div class="info-item">❌ Failed to fetch information</div>';
                 statusMessage.textContent = '❌ Error fetching data';
             }
@@ -234,9 +218,11 @@
             statusMessage.textContent = '📍 Fetching your information...';
             infoDisplay.classList.add('show');
 
-            const data = await fetchIPInfo();
-            
-            if (data) {
+            try {
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                userIPData = data;
+
                 infoContent.innerHTML = `
                     <div class="info-item"><strong>Public IP:</strong> ${data.ip}</div>
                     <div class="info-item"><strong>City:</strong> ${data.city}</div>
@@ -255,15 +241,13 @@
                 
                 infoContent.innerHTML += `<div class="info-item" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd;"><strong>Share Link:</strong><br><a href="${shareUrl}" target="_blank" style="color: #667eea; word-break: break-all;">${shareUrl}</a></div>`;
 
-                statusMessage.textContent = '✅ Copied to clipboard! Share the link above.';
-                
                 // Copy to clipboard
                 navigator.clipboard.writeText(shareUrl).then(() => {
                     statusMessage.textContent = '✅ Share link copied to clipboard!';
                 }).catch(() => {
                     statusMessage.textContent = '✅ Information published! Copy the link above to share.';
                 });
-            } else {
+            } catch (error) {
                 infoContent.innerHTML = '<div class="info-item">❌ Failed to fetch information</div>';
                 statusMessage.textContent = '❌ Error fetching data';
             }
@@ -293,8 +277,15 @@
         // Update time when page loads
         updateTime();
 
-        // Update time every second
-        setInterval(updateTime, 1000);
+        // Update time every second (without fetching IP every time)
+        setInterval(() => {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const timeString = `${hours}:${minutes}:${seconds}`;
+            document.getElementById('timeDisplay').textContent = timeString;
+        }, 1000);
 
         // Check for shared IP info
         checkURLParams();
